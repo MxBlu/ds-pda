@@ -2,6 +2,7 @@
 #include <ulib/ulib.h>
 #include <stdio.h>
 #include <time.h>
+#include "proggy_square_13_bin.h"
 
 // µLibrary uses standard 15-bit DS colors.
 // No need for BIT(15) in 3D mode!
@@ -43,13 +44,15 @@ int main(void) {
 
     // 3. Initialize µLibrary (Sets up Top Screen 3D core automatically)
     ulInit(UL_INIT_ALL);
-    ulInitNitroFs();
 
     // Initialize the graphical part
     ulInitGfx();
-    // Initialize the text part
-    ulInitText();
-    // ulSetFont(ulLoadFontFile("nitro:/proggy_square.bin", 0));
+    
+    UL_FONT *font = ulLoadFontFile((const char *)proggy_square_13_bin, (int)proggy_square_13_bin_size);
+    if (!font) {
+        printf("\n Failed to load font!");
+    }
+    ulSetFont(font);
 
     // Buffer for formatting dynamic strings
     char textBuf[32];
