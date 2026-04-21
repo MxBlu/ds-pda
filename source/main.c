@@ -4,135 +4,207 @@
 #include <time.h>
 #include "proggy_square_13_bin.h"
 
-// µLibrary uses standard 15-bit DS colors.
-// No need for BIT(15) in 3D mode!
-#define C_CHARCOAL  RGB15(4, 4, 4)
-#define C_LINE      RGB15(0, 0, 0)
-#define C_WEATHER   RGB15(10, 6, 4)
-#define C_TRAIN     RGB15(4, 6, 10)
-#define C_TASKS     RGB15(4, 8, 5)
-#define C_BUDGET    RGB15(8, 4, 9)
+// ---------------------------------------------------------------------------
+// Colour palette  (RGB15 = 5-bit per channel, 0-31)
+// ---------------------------------------------------------------------------
+#define C_BG        RGB15(2,  3,  5)   // Very dark navy
+#define C_BORDER    RGB15(0,  18, 18)  // Teal outline
+#define C_HEADER    RGB15(3,  4,  8)   // Slightly lighter header band
+
+#define C_WEATHER   RGB15(10, 6,  4)   // Warm brown
+#define C_TRAIN     RGB15(4,  6,  11)  // Cool blue
+#define C_TASKS     RGB15(4,  8,  5)   // Green
+#define C_BUDGET    RGB15(8,  4,  9)   // Purple
 
 #define C_WHITE     RGB15(31, 31, 31)
-#define C_GREY      RGB15(15, 15, 15)
-#define C_ORANGE    RGB15(31, 16, 0)
-#define C_GREEN     RGB15(0, 31, 0)
+#define C_GREY      RGB15(12, 12, 14)
+#define C_LTGREY    RGB15(20, 20, 22)
+#define C_ORANGE    RGB15(31, 18, 0)
+#define C_GREEN     RGB15(0,  28, 12)
+#define C_GREEN_TXT RGB15(0,  31, 16)
+#define C_YELLOW    RGB15(31, 28, 0)
+#define C_TEAL      RGB15(0,  24, 20)
+#define C_RED       RGB15(28, 6,  4)
+#define C_BADGE_NSW RGB15(8,  4,  14) // purple-ish badge
 
-// Helper to draw a filled box with an outline using ulib
-void drawWidgetBox(int x, int y, int w, int h, u16 bgColor, u16 outlineColor) {
-    // Draw the background fill (x1, y1, x2, y2)
-    ulDrawFillRect(x, y, x + w, y + h, bgColor);
-    
-    // Draw the 4 outline borders using lines
-    ulDrawLine(x, y, x + w, y, outlineColor);                 // Top
-    ulDrawLine(x, y + h, x + w, y + h, outlineColor);         // Bottom
-    ulDrawLine(x, y, x, y + h, outlineColor);                 // Left
-    ulDrawLine(x + w, y, x + w, y + h, outlineColor);         // Right
+// Day-of-week and month name tables
+static const char *DAY_NAMES[]   = {"SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"};
+static const char *MONTH_NAMES[] = {"JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"};
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+void drawBox(int x, int y, int w, int h, u16 bg, u16 border) {
+    ulDrawFillRect(x, y, x + w, y + h, bg);
+    ulDrawLine(x,     y,     x + w, y,     border);
+    ulDrawLine(x,     y + h, x + w, y + h, border);
+    ulDrawLine(x,     y,     x,     y + h, border);
+    ulDrawLine(x + w, y,     x + w, y + h, border);
 }
 
-int main(void) {
-    // 1. ALLOCATE VRAM FOR 3D HARDWARE (Fixes the White Screen bug)
-    vramSetBankA(VRAM_A_TEXTURE);        // Give 3D engine texture memory
-    vramSetBankB(VRAM_B_TEXTURE);        // (Needed for uLibrary's internal font)
-    vramSetBankE(VRAM_E_TEX_PALETTE);    // Give 3D engine palette memory
+// Small filled rectangle badge with text centred inside
+void drawBadge(int x, int y, int w, int h, u16 bg, u16 fg, const char *txt) {
+    ulDrawFillRect(x, y, x + w, y + h, bg);
+    ulSetTextColor(fg);
+    ulDrawString(x + 2, y + 1, txt);
+}
 
-    // 2. Initialize the Bottom Screen so it isn't blinding white
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+int main(void) {
+    // 1. VRAM for 3D hardware
+    vramSetBankA(VRAM_A_TEXTURE);
+    vramSetBankB(VRAM_B_TEXTURE);
+    vramSetBankE(VRAM_E_TEX_PALETTE);
+
+    // 2. Bottom screen debug console
     videoSetModeSub(MODE_0_2D);
     vramSetBankC(VRAM_C_SUB_BG);
     consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 31, 0, false, true);
     printf("\n  PDA OS Initialized.\n  Bottom screen ready.");
 
-    // 3. Initialize µLibrary (Sets up Top Screen 3D core automatically)
+    // 3. µLibrary init
     ulInit(UL_INIT_ALL);
-
-    // Initialize the graphical part
     ulInitGfx();
-    
+
     UL_FONT *font = ulLoadFontFile((const char *)proggy_square_13_bin, (int)proggy_square_13_bin_size);
-    if (!font) {
-        printf("\n Failed to load font!");
-    }
+    if (!font) printf("\n Failed to load font!");
     ulSetFont(font);
 
-    // Buffer for formatting dynamic strings
-    char textBuf[32];
+    char textBuf[64];
 
-    // Main Game Loop
+    // Layout constants -- DS top screen is 256 x 192
+    const int PAD     = 3;
+    const int HDR_H   = 20;           // header band height
+    const int BOX_TOP = HDR_H + PAD;  // y where widget rows start
+    const int COL_W   = 124;          // width of each column
+    const int COL2_X  = PAD + COL_W + PAD; // x of right column
+    const int ROW1_H  = 100;          // height of top widget row
+    const int ROW2_Y  = BOX_TOP + ROW1_H + PAD;
+    const int ROW2_H  = 192 - ROW2_Y - PAD; // fill to bottom
+
     while (1) {
-        // Read the actual DS internal hardware clock
         time_t t = time(NULL);
-        struct tm *timeinfo = localtime(&t);
+        struct tm *tm = localtime(&t);
 
-        // Begin the 2D-in-3D rendering phase
         ulStartDrawing2D();
-        
-        // Clear background
-        ulDrawFillRect(0, 0, 256, 192, C_CHARCOAL);
 
-        // Header Separator Line
-        ulDrawLine(0, 14, 256, 14, C_LINE);
+        // ---- Background ----
+        ulDrawFillRect(0, 0, 256, 192, C_BG);
 
-        // --- DRAW WIDGET SHAPES ---
-        int pad = 4;
-        int boxW = 122; 
-        int boxH = 82;  
-        int rightColX = pad * 2 + boxW; 
-        int bottomRowY = 20 + boxH + pad; 
+        // ---- Header band ----
+        ulDrawFillRect(0, 0, 256, HDR_H, C_HEADER);
+        ulDrawLine(0, HDR_H, 256, HDR_H, C_BORDER);
 
-        drawWidgetBox(pad, 20, boxW, boxH, C_WEATHER, C_LINE);       // Top-Left
-        drawWidgetBox(rightColX, 20, boxW, boxH, C_TRAIN, C_LINE);   // Top-Right
-        drawWidgetBox(pad, bottomRowY, boxW, boxH, C_TASKS, C_LINE); // Bottom-Left
-        drawWidgetBox(rightColX, bottomRowY, boxW, boxH, C_BUDGET, C_LINE); // Bottom-Right
-
-        // Budget Progress Bar (Fixed math: use integer instead of float for hardware safety)
-        int barX = rightColX + 4;
-        int barY = bottomRowY + 50;
-        int barInnerW = boxW - 8;
-        int filledPixels = (barInnerW * 56) / 100; // 56% filled
-        
-        ulDrawFillRect(barX, barY, barX + barInnerW, barY + 10, C_GREY); // BG
-        ulDrawFillRect(barX, barY, barX + filledPixels, barY + 10, RGB15(20, 10, 25)); // Fill
-
-        // --- DRAW TEXT ---
-        // Header
-        ulSetTextColor(C_GREY);
-        ulDrawString(4, 2, "TODAY");
+        // Day + date  e.g. "MONDAY  APR 20"
         ulSetTextColor(C_WHITE);
-        
-        // Dynamic Date & Clock
-        snprintf(textBuf, sizeof(textBuf), "%02d/%02d", timeinfo->tm_mday, timeinfo->tm_mon + 1);
-        ulDrawString(45, 2, textBuf);
-        
-        snprintf(textBuf, sizeof(textBuf), "%02d:%02d:%02d", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
-        ulDrawString(190, 2, textBuf); // Shifted X slightly left to avoid off-screen overflow
+        const char *dayName = DAY_NAMES[tm->tm_wday];
+        ulDrawString(PAD + 2, 4, dayName);
 
-        // Weather
+        ulSetTextColor(C_TEAL);
+        // Each char is 8px wide; advance past day name + 1 space
+        int dayLen = 0;
+        while (dayName[dayLen]) dayLen++;
+        snprintf(textBuf, sizeof(textBuf), "%s %d", MONTH_NAMES[tm->tm_mon], tm->tm_mday);
+        ulDrawString(PAD + 2 + (dayLen + 1) * 8, 4, textBuf);
+
+        // Clock right-aligned: 5 chars wide = 40px, place at 256-40-PAD
+        ulSetTextColor(C_WHITE);
+        snprintf(textBuf, sizeof(textBuf), "%02d:%02d", tm->tm_hour, tm->tm_min);
+        ulDrawString(256 - 40 - PAD, 4, textBuf);
+
+        // ---- Widget boxes ----
+        drawBox(PAD,     BOX_TOP, COL_W, ROW1_H, C_WEATHER, C_BORDER); // Weather TL
+        drawBox(COL2_X,  BOX_TOP, COL_W, ROW1_H, C_TRAIN,   C_BORDER); // Train TR
+        drawBox(PAD,     ROW2_Y,  COL_W, ROW2_H, C_TASKS,   C_BORDER); // Tasks BL
+        drawBox(COL2_X,  ROW2_Y,  COL_W, ROW2_H, C_BUDGET,  C_BORDER); // Budget BR
+
+        // ================================================================
+        // WEATHER widget (top-left)
+        // ================================================================
+        int wx = PAD + 4;
+        int wy = BOX_TOP + 4;
+
         ulSetTextColor(C_ORANGE);
-        ulDrawString(pad + 4, 24, "WEATHER");
-        ulSetTextColor(C_WHITE);
-        ulDrawString(pad + 4, 38, "22 C");
+        ulDrawString(wx, wy, "WEATHER");
 
-        // Transport
-        ulSetTextColor(C_WHITE);
-        ulDrawString(rightColX + 4, 24, "NEXT TRAIN");
-        ulDrawString(rightColX + 4, 38, "08:10");
-        ulSetTextColor(C_GREEN);
-        ulDrawString(rightColX + 40, 38, "LIVE");
+        // "NSW" badge top-right of weather box
+        drawBadge(PAD + COL_W - 26, BOX_TOP + 4, 24, 11, C_BADGE_NSW, C_WHITE, "NSW");
 
-        // Tasks
+        // Large temperature
         ulSetTextColor(C_WHITE);
-        ulDrawString(pad + 4, bottomRowY + 4, "TASKS");
+        ulDrawString(wx, wy + 18, "22 C");
+
+        // 3 forecast columns  (spaced evenly in COL_W)
+        // Each column is ~38px wide; labels + temps
+        ulSetTextColor(C_LTGREY);
+        ulDrawString(wx,      wy + 50, "5P");
+        ulDrawString(wx + 38, wy + 50, "9P");
+        ulDrawString(wx + 76, wy + 50, "9P");
+
         ulSetTextColor(C_GREY);
-        ulDrawString(pad + 4, bottomRowY + 18, "! Buy Milk");
+        ulDrawString(wx,      wy + 64, "24");
+        ulDrawString(wx + 38, wy + 64, "19");
+        ulDrawString(wx + 76, wy + 64, "14");
 
-        // Budget
+        // ================================================================
+        // NEXT TRAIN widget (top-right)
+        // ================================================================
+        int tx = COL2_X + 4;
+        int ty = BOX_TOP + 4;
+
         ulSetTextColor(C_WHITE);
-        ulDrawString(rightColX + 4, bottomRowY + 4, "BUDGET");
-        ulDrawString(rightColX + 4, bottomRowY + 18, "$450 / $800");
+        ulDrawString(tx, ty, "NEXT TRAIN");
 
-        // End rendering and wait for screen refresh
+        // Large time
+        ulSetTextColor(C_WHITE);
+        ulDrawString(tx, ty + 16, "08:10");
+
+        // LIVE badge
+        ulSetTextColor(C_GREEN);
+        ulDrawString(tx + 60, ty + 16, "LIVE");
+
+        // Station
+        ulSetTextColor(C_TEAL);
+        ulDrawString(tx + 4, ty + 34, "OLYMPIC PK");
+
+        // Status
+        ulSetTextColor(C_LTGREY);
+        ulDrawString(tx + 4, ty + 50, "T1: ON TIME");
+
+        // ================================================================
+        // TASKS widget (bottom-left)
+        // ================================================================
+        int qx = PAD + 4;
+        int qy = ROW2_Y + 4;
+
+        ulSetTextColor(C_WHITE);
+        ulDrawString(qx, qy, "TASKS");
+
+        ulSetTextColor(C_GREY);
+        ulDrawString(qx, qy + 14, "EXPIRED");
+
+        // ================================================================
+        // BUDGET widget (bottom-right)
+        // ================================================================
+        int bx = COL2_X + 4;
+        int by = ROW2_Y + 4;
+
+        ulSetTextColor(C_WHITE);
+        ulDrawString(bx, by, "BUDGET");
+        ulDrawString(bx, by + 14, "$450 / $800");
+
+        // Progress bar
+        int barW = COL_W - 8;
+        int filledW = (barW * 56) / 100;
+        int barY = by + 30;
+        ulDrawFillRect(bx, barY, bx + barW, barY + 8, C_GREY);
+        ulDrawFillRect(bx, barY, bx + filledW, barY + 8, RGB15(18, 8, 22));
+
+        // ---- End frame ----
         ulEndDrawing();
-        ulSyncFrame(); 
+        ulSyncFrame();
     }
 
     return 0;
