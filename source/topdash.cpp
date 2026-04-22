@@ -32,41 +32,48 @@ void initTopScreenWidgets() {
     wm->addWidget<BudgetWidget>();
 }
 
-void drawTopScreen(struct tm *tm) {
+void drawHeader(struct tm *tm) {
     char textBuf[64];
 
-    // ---- Background ----
-    ulDrawFillRect(0, 0, 256, 192, C_TOP_BG);
-
-    // ---- Header band ----
-    ulDrawFillRect(0, 0, 256, HDR_H, C_TOP_HEADER);
-    ulDrawLine(0, HDR_H, 256, HDR_H, C_TOP_BORDER);
-
-    // Day + date  e.g. "MONDAY  APR 20"
-    ulSetTextColor(C_WHITE);
+    // Get the day of the week
     const char *dayName = DAY_NAMES[tm->tm_wday];
-    ulDrawString(PAD + 2, 4, dayName);
-
-    ulSetTextColor(C_TEAL);
-    // Each char is 8px wide; advance past day name + 1 space
+    // Get the month and date in "MON 1" format
+    snprintf(textBuf, sizeof(textBuf), "%s %d", MONTH_SHORT_NAMES[tm->tm_mon], tm->tm_mday);
+    // Calculate length of day name for positioning date text
     int dayLen = 0;
     while (dayName[dayLen]) dayLen++;
-    snprintf(textBuf, sizeof(textBuf), "%s %d", MONTH_NAMES[tm->tm_mon], tm->tm_mday);
-    ulDrawString(PAD + 2 + (dayLen + 1) * 8, 4, textBuf);
+
+    // Draw day name
+    ulSetTextColor(C_DAY_TXT);
+    ulDrawString(OUTER_PAD, HDR_TEXT_Y, dayName);
+    // Draw month + date, positioned after day name + 1 space (8px per char)
+    ulSetTextColor(C_DATETIME_TXT);
+    ulDrawString(OUTER_PAD + (dayLen + 1) * 8, HDR_TEXT_Y, textBuf);
 
     // Clock right-aligned: 5 chars wide = 40px, place at 256-40-PAD
     ulSetTextColor(C_WHITE);
     snprintf(textBuf, sizeof(textBuf), "%02d:%02d", tm->tm_hour, tm->tm_min);
-    ulDrawString(256 - 40 - PAD, 4, textBuf);
+    ulDrawString(SCREEN_WIDTH - OUTER_PAD - (8 * 5), HDR_TEXT_Y, textBuf);
 
-    int draw_cursor_x = PAD;
-    int draw_cursor_y = HDR_H + PAD;
+    // Draw header separator line
+    ulDrawLine(OUTER_PAD, HDR_H - 1, SCREEN_WIDTH - OUTER_PAD, HDR_H - 1, C_HEADER_SEP);
+}
+
+void drawTopScreen(struct tm *tm) {
+    // Set background colour
+    ulDrawFillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, C_BG);
+
+    // Draw the header elements
+    drawHeader(tm);
+
+    int draw_cursor_x = 3;
+    int draw_cursor_y = HDR_H + 8;
     for (auto& widget : wm->widgets) {
         widget->draw(draw_cursor_x, draw_cursor_y, WIDGET_WIDTH, WIDGET_HEIGHT);
-        draw_cursor_x += WIDGET_WIDTH + PAD;
+        draw_cursor_x += WIDGET_WIDTH + 3;
         if (draw_cursor_x > SCREEN_WIDTH) {
-            draw_cursor_x = PAD;
-            draw_cursor_y += WIDGET_HEIGHT + PAD;
+            draw_cursor_x = 3;
+            draw_cursor_y += WIDGET_HEIGHT + 3;
         }
     }
 }

@@ -9,7 +9,7 @@ static const char *DAY_NAMES[] = {
     "THURSDAY",
     "FRIDAY",
     "SATURDAY"};
-static const char *MONTH_NAMES[] = {
+static const char *MONTH_SHORT_NAMES[] = {
     "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
-// static const char *MONTH_FULL_NAMES[] = {
+// static const char *MONTH_LONG_NAMES[] = {
 //     "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"};

@@ -4,23 +4,20 @@
 
 #include <colours.h>
 
-#define PAD 3
-// header band height
-#define HDR_H   20
-// y where widget rows start
-#define BOX_TOP HDR_H + PAD
-// width of each column
-#define COL_W   124
-// x of right column
-#define COL2_X  PAD + COL_W + PAD
-// height of top widget row
-#define ROW1_H  100
-#define ROW2_Y  BOX_TOP + ROW1_H + PAD
-// fill to bottom
-#define ROW2_H  192 - ROW2_Y - PAD
+// Padding from screen edges for header and widgets
+#define OUTER_PAD 8
+// Total header height including separator line
+#define HDR_H   41
+// Header text render Y position
+#define HDR_TEXT_Y 13
 
 #define WIDGET_WIDTH 124
 #define WIDGET_HEIGHT 100
+
+#define C_BG C_GREY_DEEP_NIGHT
+#define C_DAY_TXT C_GREY_STEEL_MIST
+#define C_DATETIME_TXT C_WHITE
+#define C_HEADER_SEP C_BLUE_MIDNIGHT_NAVY
 
 void initTopScreenWidgets();
 void drawTopScreen(struct tm*);

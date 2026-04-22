@@ -6,7 +6,7 @@
 #include <helpers.h>
 
 void TasksWidget::draw(int top_x, int top_y, int width, int height) {
-    drawBox(top_x, top_y,  width, height, C_TASKS, C_TOP_BORDER);
+    drawBox(top_x, top_y,  width, height, C_TASKS, C_WHITE);
 
     int qx = top_x + 4;
     int qy = top_y + 4;

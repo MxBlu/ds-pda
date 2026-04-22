@@ -6,7 +6,7 @@
 #include <helpers.h>
 
 void WeatherWidget::draw(int top_x, int top_y, int width, int height) {
-    drawBox(top_x, top_y, width, height, C_WEATHER, C_TOP_BORDER); // Weather TL
+    drawBox(top_x, top_y, width, height, C_WEATHER, C_WHITE); // Weather TL
 
     int wx = top_x + 4;
     int wy = top_y + 4;

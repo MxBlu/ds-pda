@@ -6,7 +6,7 @@
 #include <helpers.h>
 
 void TrainWidget::draw(int top_x, int top_y, int width, int height) {
-    drawBox(top_x,  top_y, width, height, C_TRAIN,   C_TOP_BORDER); // Train TR
+    drawBox(top_x,  top_y, width, height, C_TRAIN, C_WHITE); // Train TR
 
     int tx = top_x + 4;
     int ty = top_y + 4;

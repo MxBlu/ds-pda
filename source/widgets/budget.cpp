@@ -6,7 +6,7 @@
 #include <helpers.h>
 
 void BudgetWidget::draw(int top_x, int top_y, int width, int height) {
-    drawBox(top_x,  top_y,  width, height, C_BUDGET,  C_TOP_BORDER); // Budget BR
+    drawBox(top_x,  top_y,  width, height, C_BUDGET,  C_WHITE); // Budget BR
 
     int bx = top_x + 4;
     int by = top_y + 4;
