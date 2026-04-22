@@ -3,32 +3,15 @@
         {
             "name": "Linux",
             "includePath": [
-                "/home/mxblue/code/ds-pda/**"
-            ],
-            "defines": [],
-            "compilerPath": "/usr/bin/clang",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "linux-clang-x64",
-            "compilerPathInCppPropertiesJson": "/usr/bin/clang",
-            "mergeConfigurations": false,
-            "recursiveIncludes": {},
-            "configurationProvider": "ms-vscode.makefile-tools",
-            "browse": {
-                "limitSymbolsToIncludedHeaders": true
-            }
-        },
-        {
-            "name": "Linux-Docker",
-            "includePath": [
-                "/work/**"
+                "${workspaceFolder}/include",
+                "/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include",
+                "/opt/wonderful/thirdparty/blocksds/external/ulibrary/include"
             ],
             "defines": [],
             "compilerPath": "/opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-gcc",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-gcc-arm",
-            "compilerPathInCppPropertiesJson": "/opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-gcc",
             "mergeConfigurations": false,
             "recursiveIncludes": {},
             "configurationProvider": "ms-vscode.makefile-tools",
