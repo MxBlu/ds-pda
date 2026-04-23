@@ -3,5 +3,8 @@
 #include <widgets/widget.h>
 
 class WeatherWidget : public Widget {
-    void draw(int top_x, int top_y, int width, int height);
+protected:
+    void drawContents(int top_x, int top_y, int width, int height);
+public:
+    WeatherWidget() : Widget(C_ORANGE_GUNMETAL, C_ORANGE_BLACKENED_CURRANT) {};
 };

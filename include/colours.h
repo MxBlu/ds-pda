@@ -18,14 +18,26 @@
 #define C_SLTGREY           RGB15(3,  4,  8)
 #define C_GREY_DEEP_NIGHT   RGB15(3,  3,  3)
 
+#define C_PURPLE_MUTED_MULBERRY RGB15(6, 4, 8)
+
 #define C_DKNAVY            RGB15(2,  3,  5)
+#define C_BLUE_DEEP_CHARCOAL RGB15(4, 5, 8)
+#define C_BLUE_OBSIDIAN      RGB15(5, 5, 6)
 #define C_BLUE_MIDNIGHT_NAVY RGB15(6, 8, 11)
 
-#define C_TEAL      RGB15(0,  24, 20)
-#define C_GREEN     RGB15(0,  28, 12)
-#define C_GREEN_TXT RGB15(0,  31, 16)
+#define C_GREEN_DEEP_FOREST_SHADOW RGB15(4, 5, 4)
+#define C_GREEN_STORMY      RGB15(5, 7, 5)
+#define C_TEAL              RGB15(0,  24, 20)
+#define C_GREEN             RGB15(0,  28, 12)
+#define C_GREEN_TXT         RGB15(0,  31, 16)
 
-#define C_ORANGE    RGB15(31, 18, 0)
 #define C_YELLOW    RGB15(31, 28, 0)
+
+#define C_ORANGE_GUNMETAL RGB15(6, 5, 5)
+#define C_ORANGE_BLACKENED_CURRANT RGB15(8, 5, 4)
+#define C_ORANGE    RGB15(31, 18, 0)
+
+#define C_RED_PLUM_CHARCOAL RGB15(5, 4, 5)
 #define C_RED       RGB15(28, 6,  4)
+
 #define C_BADGE_NSW RGB15(8,  4,  14) // purple-ish badge

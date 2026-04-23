@@ -9,10 +9,7 @@
 // Total header height including separator line
 #define HDR_H   41
 // Header text render Y position
-#define HDR_TEXT_Y 13
-
-#define WIDGET_WIDTH 124
-#define WIDGET_HEIGHT 100
+#define HDR_TEXT_Y 14
 
 #define C_BG C_GREY_DEEP_NIGHT
 #define C_DAY_TXT C_GREY_STEEL_MIST

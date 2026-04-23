@@ -4,6 +4,7 @@
 #include <widgets/tasks.h>
 #include <widgets/train.h>
 #include <widgets/weather.h>
+#include <widgets/test.h>
 #include <date_names.h>
 #include <helpers.h>
 
@@ -26,6 +27,7 @@ WidgetsManager *wm;
 
 void initTopScreenWidgets() {
     wm = new WidgetsManager();
+    
     wm->addWidget<WeatherWidget>();
     wm->addWidget<TrainWidget>();
     wm->addWidget<TasksWidget>();
@@ -66,14 +68,17 @@ void drawTopScreen(struct tm *tm) {
     // Draw the header elements
     drawHeader(tm);
 
-    int draw_cursor_x = 3;
-    int draw_cursor_y = HDR_H + 8;
+    int draw_cursor_x = OUTER_PAD;
+    int draw_cursor_y = HDR_H + OUTER_PAD;
+    int row_widget_count = 0;
     for (auto& widget : wm->widgets) {
         widget->draw(draw_cursor_x, draw_cursor_y, WIDGET_WIDTH, WIDGET_HEIGHT);
-        draw_cursor_x += WIDGET_WIDTH + 3;
-        if (draw_cursor_x > SCREEN_WIDTH) {
-            draw_cursor_x = 3;
-            draw_cursor_y += WIDGET_HEIGHT + 3;
+        draw_cursor_x += WIDGET_WIDTH + WIDGET_INNER_PAD;
+        row_widget_count++;
+        if (row_widget_count >= 2) { // Max 2 widgets per row
+            draw_cursor_x = OUTER_PAD;
+            draw_cursor_y += WIDGET_HEIGHT + WIDGET_INNER_PAD;
+            row_widget_count = 0;
         }
     }
 }
