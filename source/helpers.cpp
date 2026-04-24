@@ -13,14 +13,10 @@
 /// @param border Border color
 /// @param borderThickness Thickness of the border
 void drawBox(int x, int y, int w, int h, u16 bg, u16 border, int borderThickness) {
+    // Draw border box
+    ulDrawFillRect(x, y, x + w, y + h, border);
     // Draw background
-    ulDrawFillRect(x, y, x + w, y + h, bg);
-
-    // Draw borders
-    ulDrawFillRect(x,   y,                x + w,    y + borderThickness, border); // Top
-    ulDrawFillRect(x,   y + h - borderThickness,    x + w, y + h,   border); // Bottom
-    ulDrawFillRect(x,   y, x + borderThickness,     y + h,          border); // Left
-    ulDrawFillRect(x + w - borderThickness, y,      x + w, y + h,   border); // Right
+    ulDrawFillRect(x + 2, y + 2, x + w - 2, y + h - 2, bg);
 }
 
 // Small filled rectangle badge with text centred inside

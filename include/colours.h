@@ -17,6 +17,7 @@
 #define C_GREY              RGB15(12, 12, 14)
 #define C_SLTGREY           RGB15(3,  4,  8)
 #define C_GREY_DEEP_NIGHT   RGB15(3,  3,  3)
+#define C_BLACK             RGB15(0,  0,  0)
 
 #define C_PURPLE_MUTED_MULBERRY RGB15(6, 4, 8)
 
