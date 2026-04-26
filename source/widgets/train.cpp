@@ -6,9 +6,6 @@
 #include <helpers.h>
 
 void TrainWidget::drawContents(int top_x, int top_y, int width, int height) {
-    ulSetTextColor(C_WHITE);
-    ulDrawString(top_x, top_y, "NEXT TRAIN");
-
     // Large time
     ulSetTextColor(C_WHITE);
     ulDrawString(top_x, top_y + 16, "08:10");

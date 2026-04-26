@@ -40,7 +40,6 @@ int main(void) {
 
         drawTopScreen(tm);
 
-        // ---- End frame ----
         ulEndDrawing();
         ulSyncFrame();
     }

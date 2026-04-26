@@ -6,5 +6,5 @@ class TasksWidget : public Widget {
 protected:
     void drawContents(int top_x, int top_y, int width, int height);
 public:
-    TasksWidget() : Widget(C_GREEN_DEEP_FOREST_SHADOW, C_GREEN_STORMY) {};
+    TasksWidget() : Widget("TASKS", C_GREEN_DEEP_FOREST_SHADOW, C_GREEN_STORMY, C_GREEN_SPRING_FERN) {};
 };

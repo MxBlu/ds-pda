@@ -7,7 +7,6 @@
 
 void BudgetWidget::drawContents(int top_x, int top_y, int width, int height) {
     ulSetTextColor(C_WHITE);
-    ulDrawString(top_x, top_y, "BUDGET");
     ulDrawString(top_x, top_y + 14, "$450 / $800");
 
     // Progress bar

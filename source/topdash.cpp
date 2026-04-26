@@ -45,6 +45,9 @@ void drawHeader(struct tm *tm) {
     int dayLen = 0;
     while (dayName[dayLen]) dayLen++;
 
+    // Redraw the background for the header area (in case of artifacts from widgets)
+    ulDrawFillRect(0, 0, SCREEN_WIDTH, HDR_H + OUTER_PAD, C_BG);
+
     // Draw day name
     ulSetTextColor(C_DAY_TXT);
     ulDrawString(OUTER_PAD, HDR_TEXT_Y, dayName);
@@ -65,9 +68,7 @@ void drawTopScreen(struct tm *tm) {
     // Set background colour
     ulDrawFillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, C_BG);
 
-    // Draw the header elements
-    drawHeader(tm);
-
+    // Draw widgets, positioned in rows with 8px padding, max 2 per row
     int draw_cursor_x = OUTER_PAD;
     int draw_cursor_y = HDR_H + OUTER_PAD;
     int row_widget_count = 0;
@@ -75,10 +76,14 @@ void drawTopScreen(struct tm *tm) {
         widget->draw(draw_cursor_x, draw_cursor_y, WIDGET_WIDTH, WIDGET_HEIGHT);
         draw_cursor_x += WIDGET_WIDTH + WIDGET_INNER_PAD;
         row_widget_count++;
-        if (row_widget_count >= 2) { // Max 2 widgets per row
+        if (row_widget_count >= 2) {
             draw_cursor_x = OUTER_PAD;
             draw_cursor_y += WIDGET_HEIGHT + WIDGET_INNER_PAD;
             row_widget_count = 0;
         }
     }
+
+    // Draw the header elements
+    // We draw this last so it appears above the widgets
+    drawHeader(tm);
 }

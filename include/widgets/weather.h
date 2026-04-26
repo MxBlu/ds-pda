@@ -6,5 +6,5 @@ class WeatherWidget : public Widget {
 protected:
     void drawContents(int top_x, int top_y, int width, int height);
 public:
-    WeatherWidget() : Widget(C_ORANGE_GUNMETAL, C_ORANGE_BLACKENED_CURRANT) {};
+    WeatherWidget() : Widget("WEATHER", C_ORANGE_GUNMETAL, C_ORANGE_BLACKENED_CURRANT, C_ORANGE_MONARCH_ORANGE) {};
 };

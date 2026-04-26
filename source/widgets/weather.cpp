@@ -6,11 +6,9 @@
 #include <helpers.h>
 
 void WeatherWidget::drawContents(int top_x, int top_y, int width, int height) {
-    ulSetTextColor(C_ORANGE);
-    ulDrawString(top_x, top_y, "WEATHER");
-
     // "NSW" badge top-right of weather box
-    drawBadge(top_x + width - 26, top_y + 4, 24, 11, C_BADGE_NSW, C_WHITE, "NSW");
+    ulSetTextColor(this->titleColour);
+    ulDrawString(top_x + width - 22, top_y - 6, "NSW");
 
     // Large temperature
     ulSetTextColor(C_WHITE);

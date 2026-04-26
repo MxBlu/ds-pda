@@ -6,9 +6,6 @@
 #include <helpers.h>
 
 void TasksWidget::drawContents(int top_x, int top_y, int width, int height) {
-    ulSetTextColor(C_WHITE);
-    ulDrawString(top_x, top_y, "TASKS");
-
     ulSetTextColor(C_GREY);
     ulDrawString(top_x, top_y + 14, "EXPIRED");
 }
