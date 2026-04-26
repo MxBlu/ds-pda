@@ -16,5 +16,6 @@
 #define C_DATETIME_TXT C_WHITE
 #define C_HEADER_SEP C_BLUE_MIDNIGHT_NAVY
 
-void initTopScreenWidgets();
+void initTopScreen();
+void updateTopScreen();
 void drawTopScreen(struct tm*);

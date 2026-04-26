@@ -29,12 +29,17 @@ int main(void) {
     if (!font) printf("\n Failed to load font!");
     ulSetFont(font);
 
-    initTopScreenWidgets();
+    initTopScreen();
 
     while (1) {
         // Get current time
         time_t t = time(NULL);
         struct tm *tm = localtime(&t);
+        // Update keys
+        scanKeys();
+
+        // Run updates
+        updateTopScreen();
 
         ulStartDrawing2D();
 

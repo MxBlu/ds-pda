@@ -16,22 +16,67 @@
 class WidgetsManager {
 public:
     std::vector<std::unique_ptr<Widget>> widgets;
+    int pos_y = 0;
 
     template<typename T>
     void addWidget() {
         this->widgets.push_back(std::make_unique<T>());
     };
+
+    int getWidgetVerticalSpacing() {
+        int rows = (widgets.size() + 1) / 2;
+
+        return rows * (WIDGET_HEIGHT + WIDGET_INNER_PAD);
+    }
 };
 
 WidgetsManager *wm;
 
-void initTopScreenWidgets() {
+void initTopScreen() {
     wm = new WidgetsManager();
     
     wm->addWidget<WeatherWidget>();
     wm->addWidget<TrainWidget>();
     wm->addWidget<TasksWidget>();
     wm->addWidget<BudgetWidget>();
+}
+
+bool canScrollUp() {
+    // We can only scroll up if we've scrolled down at least 1 pixel
+    return wm->pos_y > 0;
+}
+
+bool canScrollDown() {
+    int totalWidgetHeight = wm->getWidgetVerticalSpacing();
+    int availableHeight = SCREEN_HEIGHT - HDR_H - OUTER_PAD;
+    // No point scrolling if widgets fit within available space
+    if (totalWidgetHeight <= availableHeight) {
+        return false;
+    }
+    // Check if we've scrolled to the point where the last row of widgets is just visible
+    return wm->pos_y + availableHeight < totalWidgetHeight;
+}
+
+void updateTopScreen() {
+    // Placeholder for any future updates needed each frame
+    auto keys = keysHeld();
+    if (keys & KEY_DOWN && canScrollDown()) {
+        int totalWidgetHeight = wm->getWidgetVerticalSpacing();
+        int availableHeight = SCREEN_HEIGHT - HDR_H - OUTER_PAD;
+
+        wm->pos_y += 5;
+        // Clamp to max scroll position where last row of widgets is just visible
+        if (wm->pos_y + availableHeight > totalWidgetHeight) {
+            wm->pos_y = totalWidgetHeight - availableHeight;
+        }
+    }
+    if (keys & KEY_UP && canScrollUp()) {
+        wm->pos_y -= 5;
+        // Clamp to minimum scroll position of 0
+        if (wm->pos_y < 0) {
+            wm->pos_y = 0;
+        }
+    }
 }
 
 void drawHeader(struct tm *tm) {
@@ -70,7 +115,7 @@ void drawTopScreen(struct tm *tm) {
 
     // Draw widgets, positioned in rows with 8px padding, max 2 per row
     int draw_cursor_x = OUTER_PAD;
-    int draw_cursor_y = HDR_H + OUTER_PAD;
+    int draw_cursor_y = HDR_H + OUTER_PAD - wm->pos_y; // Add scroll offset to Y position
     int row_widget_count = 0;
     for (auto& widget : wm->widgets) {
         widget->draw(draw_cursor_x, draw_cursor_y, WIDGET_WIDTH, WIDGET_HEIGHT);
