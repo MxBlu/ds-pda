@@ -3,6 +3,7 @@
 #include <ulib/ulib.h>
 
 #include <colours.h>
+#include <fonts.h>
 #include <helpers.h>
 
 void Widget::draw(int top_x, int top_y, int width, int height) {
@@ -26,8 +27,9 @@ void Widget::draw(int top_x, int top_y, int width, int height) {
 }
 
 void Widget::drawTitle(const char *title, int top_x, int top_y, int width, int height) {
+    selectFont(FONT_PROGGY_12B);
     ulSetTextColor(this->titleColour);
-    ulDrawString(top_x + 4, top_y + 4, title);
+    drawStringBaselineAligned(top_x + 4, top_y + 6, title);
     // Draw separator line
     ulDrawFillRect(top_x + 4, top_y + 4 + WIDGET_TITLE_SEP, top_x + width - 4, top_y + 4 + WIDGET_TITLE_SEP, this->borderColour);
 }

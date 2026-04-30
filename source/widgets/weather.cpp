@@ -3,26 +3,31 @@
 #include <ulib/ulib.h>
 
 #include <colours.h>
+#include <fonts.h>
 #include <helpers.h>
 
 void WeatherWidget::drawContents(int top_x, int top_y, int width, int height) {
     // "NSW" badge top-right of weather box
+    selectFont(FONT_PROGGY_10);
     ulSetTextColor(this->titleColour);
-    ulDrawString(top_x + width - 22, top_y - 6, "NSW");
+    drawStringBaselineAlignedRightAligned(top_x + width, top_y - 6, "NSW");
 
     // Large temperature
+    selectFont(FONT_PROGGY_16B);
     ulSetTextColor(C_WHITE);
-    ulDrawString(top_x, top_y + 18, "22 C");
+    drawStringBaselineAligned(top_x, top_y + 18, "22 C");
 
     // 3 forecast columns  (spaced evenly in COL_W)
     // Each column is ~38px wide; labels + temps
+    selectFont(FONT_PROGGY_10);
     ulSetTextColor(C_LTGREY);
-    ulDrawString(top_x,      top_y + 50, "5P");
-    ulDrawString(top_x + 38, top_y + 50, "9P");
-    ulDrawString(top_x + 76, top_y + 50, "9P");
+    drawStringBaselineAligned(top_x,      top_y + 50, "5P");
+    drawStringBaselineAligned(top_x + 38, top_y + 50, "9P");
+    drawStringBaselineAligned(top_x + 76, top_y + 50, "9P");
 
+    selectFont(FONT_PROGGY_10);
     ulSetTextColor(C_GREY);
-    ulDrawString(top_x,      top_y + 64, "24");
-    ulDrawString(top_x + 38, top_y + 64, "19");
-    ulDrawString(top_x + 76, top_y + 64, "14");
+    drawStringBaselineAligned(top_x,      top_y + 64, "24");
+    drawStringBaselineAligned(top_x + 38, top_y + 64, "19");
+    drawStringBaselineAligned(top_x + 76, top_y + 64, "14");
 }
