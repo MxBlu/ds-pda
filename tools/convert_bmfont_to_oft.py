@@ -19,11 +19,20 @@ fnt_dir = os.path.dirname(input_fnt)
 chars = {}
 lineHeight = 13
 pages = {}
+is_bold = 0
+spacing_x = 0
 
 with open(input_fnt, 'r') as f:
     for line in f:
         line = line.strip()
-        if line.startswith("common "):
+        if line.startswith("info "):
+            m_bold = re.search(r'bold=(\d+)', line)
+            m_spacing = re.search(r'spacing=(\d+),(\d+)', line)
+            if m_bold:
+                is_bold = int(m_bold.group(1))
+            if m_spacing:
+                spacing_x = int(m_spacing.group(1))
+        elif line.startswith("common "):
             m = re.search(r'lineHeight=(\d+)', line)
             if m: lineHeight = int(m.group(1))
         elif line.startswith("page "):
@@ -94,7 +103,8 @@ def get_pixel(x, y):
 # - width_table (xadvance) controls text cursor advance in uLibrary.
 # - added_space lets characters draw wider than their advance (right overhang),
 #   which is needed for some Proggy glyphs in the 10px set.
-max_xadvance = max(c.get('xadvance', 8) for c in chars.values())
+advance_adjust = spacing_x if is_bold else 0
+max_xadvance = max(max(1, c.get('xadvance', 8) - advance_adjust) for c in chars.values())
 max_extent = max((c.get('xoffset', 0) + c.get('width', 0)) for c in chars.values())
 
 char_width = max(max_xadvance, max_extent)
@@ -104,7 +114,8 @@ added_space = max(0, max_extent - max_xadvance)
 
 print(
     f"Generating OSLFont: char_width={char_width}, char_height={char_height}, "
-    f"line_width={line_width}, added_space={added_space}, chars={len(chars)}"
+    f"line_width={line_width}, added_space={added_space}, "
+    f"advance_adjust={advance_adjust}, chars={len(chars)}"
 )
 
 def make_bin():
@@ -132,7 +143,7 @@ def make_bin():
         grid = [[0]*char_width for _ in range(char_height)]
         
         if c is not None:
-            width_table[char_idx] = c.get('xadvance', max_xadvance)
+            width_table[char_idx] = max(1, c.get('xadvance', max_xadvance) - advance_adjust)
             
             x_src = c['x']
             y_src = c['y']

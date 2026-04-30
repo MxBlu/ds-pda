@@ -1,3 +1,8 @@
+#include <vector>
+#include <memory>
+#include <nds/system.h>
+#include <ulib/ulib.h>
+
 #include <topdash.h>
 #include <widgets/widget.h>
 #include <widgets/budget.h>
@@ -7,12 +12,7 @@
 #include <widgets/test.h>
 #include <date_names.h>
 #include <helpers.h>
-
-#include <vector>
-#include <memory>
-#include <nds/system.h>
-#include <ulib/ulib.h>
-
+#include <fonts.h>
 class WidgetsManager {
 public:
     std::vector<std::unique_ptr<Widget>> widgets;
@@ -58,8 +58,9 @@ bool canScrollDown() {
 }
 
 void updateTopScreen() {
-    // Placeholder for any future updates needed each frame
+    // Handle inputs
     auto keys = keysHeld();
+    // Down - scroll down (move widgets up)
     if (keys & KEY_DOWN && canScrollDown()) {
         int totalWidgetHeight = wm->getWidgetVerticalSpacing();
         int availableHeight = SCREEN_HEIGHT - HDR_H - OUTER_PAD;
@@ -70,6 +71,7 @@ void updateTopScreen() {
             wm->pos_y = totalWidgetHeight - availableHeight;
         }
     }
+    // Up - scroll up (move widgets down)
     if (keys & KEY_UP && canScrollUp()) {
         wm->pos_y -= 5;
         // Clamp to minimum scroll position of 0
@@ -87,29 +89,32 @@ void drawHeader(struct tm *tm) {
     // Get the month and date in "MON 1" format
     snprintf(textBuf, sizeof(textBuf), "%s %d", MONTH_SHORT_NAMES[tm->tm_mon], tm->tm_mday);
     // Calculate length of day name for positioning date text
-    int dayLen = 0;
-    while (dayName[dayLen]) dayLen++;
+    int dayLen = ulGetStringWidth(dayName);
 
     // Redraw the background for the header area (in case of artifacts from widgets)
     ulDrawFillRect(0, 0, SCREEN_WIDTH, HDR_H + OUTER_PAD, C_BG);
 
     // Draw day name
+    selectFont(FONT_PROGGY_10);
     ulSetTextColor(C_DAY_TXT);
-    ulDrawString(OUTER_PAD, HDR_TEXT_Y, dayName);
-    // Draw month + date, positioned after day name + 1 space (8px per char)
+    drawStringBaselineAligned(OUTER_PAD, HDR_TEXT_Y, dayName);
+    // Draw month + date, positioned after day name + 1 space
+    selectFont(FONT_PROGGY_12B);
     ulSetTextColor(C_DATETIME_TXT);
-    ulDrawString(OUTER_PAD + (dayLen + 1) * 8, HDR_TEXT_Y, textBuf);
+    drawStringBaselineAligned(OUTER_PAD + dayLen + 8, HDR_TEXT_Y, textBuf);
 
-    // Clock right-aligned: 5 chars wide = 40px, place at 256-40-PAD
+    // Clock right-aligned
+    selectFont(FONT_PROGGY_16B);
     ulSetTextColor(C_WHITE);
     snprintf(textBuf, sizeof(textBuf), "%02d:%02d", tm->tm_hour, tm->tm_min);
-    ulDrawString(SCREEN_WIDTH - OUTER_PAD - (8 * 5), HDR_TEXT_Y, textBuf);
+    drawStringBaselineAlignedRightAligned(SCREEN_WIDTH - OUTER_PAD, HDR_TEXT_Y, textBuf);
 
     // Draw header separator line
     ulDrawLine(OUTER_PAD, HDR_H - 1, SCREEN_WIDTH - OUTER_PAD, HDR_H - 1, C_HEADER_SEP);
 }
 
 void drawTopScreen(struct tm *tm) {
+    selectFont(FONT_PROGGY_10);
     // Set background colour
     ulDrawFillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, C_BG);
 

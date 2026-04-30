@@ -1,22 +1,20 @@
 #include <fonts.h>
 #include <ulib/ulib.h>
 
-#include "proggy_square_8_120h_bin.h"
 #include "proggy_square_10_bin.h"
 #include "proggy_square_12b_bin.h"
 #include "proggy_square_16b_bin.h"
 
 // We would like 6px, 8px, 12px, 16px
 // but we can't practically get 6px and 8px
-// 8px is hacked in with 120% height, but 6px is just not possible to get with a good quality
 
 UL_FONT *fonts[NUM_FONTS];
 int currentFont = -1;
 
-void initFonts() {
-   fonts[FONT_PROGGY_8] = ulLoadFontFile((const char *)proggy_square_8_120h_bin, sizeof(proggy_square_8_120h_bin));
-   if (!fonts[FONT_PROGGY_8]) printf("\n Failed to load font size 8!");
+// Offsets to keep mixed-font text baseline-aligned.
+static const int fontBaselineOffsets[NUM_FONTS] = {0, -2, -5, 0};
 
+void initFonts() {
    fonts[FONT_PROGGY_10] = ulLoadFontFile((const char *)proggy_square_10_bin, sizeof(proggy_square_10_bin));
    if (!fonts[FONT_PROGGY_10]) printf("\n Failed to load font size 10!");
 
@@ -38,4 +36,22 @@ void selectFont(int font) {
 
 int getCurrentFont() {
    return currentFont;
+}
+
+int getFontBaselineOffset(int font) {
+   if (font < 0 || font >= NUM_FONTS) return 0;
+   return fontBaselineOffsets[font];
+}
+
+int getCurrentFontBaselineOffset() {
+   return getFontBaselineOffset(currentFont);
+}
+
+void drawStringBaselineAligned(int x, int y, const char *text) {
+   ulDrawString(x, y + getCurrentFontBaselineOffset(), text);
+}
+
+void drawStringBaselineAlignedRightAligned(int x, int y, const char *text) {
+   int textWidth = ulGetStringWidth(text);
+   ulDrawString(x - textWidth, y + getCurrentFontBaselineOffset(), text);
 }
