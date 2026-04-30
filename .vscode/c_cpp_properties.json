@@ -4,10 +4,11 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/include",
+                "${workspaceFolder}/build/ds-pda/data",
                 "/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include",
                 "/opt/wonderful/thirdparty/blocksds/external/ulibrary/include"
             ],
-            "defines": [],
+            "defines": [ "ARM9"],
             "compilerPath": "/opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-gcc",
             "cStandard": "c17",
             "cppStandard": "c++17",

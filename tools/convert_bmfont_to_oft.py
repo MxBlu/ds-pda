@@ -88,14 +88,24 @@ def get_pixel(x, y):
             if r > 128 or g > 128 or b > 128: return 1
     return 0
 
-# Determine grid size
+# Determine OSLFont metrics.
+#
+# - char_width controls how many source bits are stored per row (lineWidth bytes).
+# - width_table (xadvance) controls text cursor advance in uLibrary.
+# - added_space lets characters draw wider than their advance (right overhang),
+#   which is needed for some Proggy glyphs in the 10px set.
 max_xadvance = max(c.get('xadvance', 8) for c in chars.values())
-# OSLFont works best if we use max width as char_width if it's fixed, or just use 8 for 8-pixel fonts.
-# Proggy is 8px wide. Let's force char_width to max_xadvance.
-char_width = max_xadvance
-char_height = lineHeight
+max_extent = max((c.get('xoffset', 0) + c.get('width', 0)) for c in chars.values())
 
-print(f"Generating OSLFont: char_width={char_width}, char_height={char_height}, chars={len(chars)}")
+char_width = max(max_xadvance, max_extent)
+char_height = lineHeight
+line_width = (char_width + 7) // 8
+added_space = max(0, max_extent - max_xadvance)
+
+print(
+    f"Generating OSLFont: char_width={char_width}, char_height={char_height}, "
+    f"line_width={line_width}, added_space={added_space}, chars={len(chars)}"
+)
 
 def make_bin():
     header = bytearray(64)
@@ -103,13 +113,14 @@ def make_bin():
     header[12:16] = bytes([1, 1, 0, 0]) # bitplanes=1, variable=1
     header[16:20] = struct.pack('<I', char_width)
     header[20:24] = struct.pack('<I', char_height)
-    header[24:28] = struct.pack('<I', 1)
+    header[24:28] = struct.pack('<I', line_width)
+    header[28] = added_space & 0xFF
 
     width_table = bytearray(256)
     
-    # Fill width table with default advance (usually max advance or 0)
+    # Fill width table with default advance.
     for i in range(256):
-        width_table[i] = char_width
+        width_table[i] = max_xadvance
 
     # We need ceil(char_width / 8) bytes per row.
     bytes_per_char_row = (char_width + 7) // 8
@@ -121,7 +132,7 @@ def make_bin():
         grid = [[0]*char_width for _ in range(char_height)]
         
         if c is not None:
-            width_table[char_idx] = c.get('xadvance', char_width)
+            width_table[char_idx] = c.get('xadvance', max_xadvance)
             
             x_src = c['x']
             y_src = c['y']

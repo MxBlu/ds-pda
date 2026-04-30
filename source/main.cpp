@@ -3,8 +3,7 @@
 #include <stdio.h>
 
 #include <topdash.h>
-
-#include "proggy_square_13_bin.h"
+#include <fonts.h>
 
 // ---------------------------------------------------------------------------
 // Main
@@ -21,14 +20,11 @@ int main(void) {
     consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 31, 0, false, true);
     printf("\n  PDA OS Initialized.\n  Bottom screen ready.");
 
-    // 3. µLibrary init
+    // 3. Inits
     ulInit(UL_INIT_ALL);
     ulInitGfx();
 
-    UL_FONT *font = ulLoadFontFile((const char *)proggy_square_13_bin, (int)proggy_square_13_bin_size);
-    if (!font) printf("\n Failed to load font!");
-    ulSetFont(font);
-
+    initFonts();
     initTopScreen();
 
     while (1) {
@@ -43,6 +39,7 @@ int main(void) {
 
         ulStartDrawing2D();
 
+        // Run draws
         drawTopScreen(tm);
 
         ulEndDrawing();
