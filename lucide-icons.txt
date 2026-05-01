@@ -1,0 +1,13 @@
+sun
+moon
+cloud-sun
+cloud
+cloudy
+cloud-drizzle
+cloud-rain
+cloud-lightning
+snowflake
+cloud-fog
+info
+triangle-alert
+octagon-alert

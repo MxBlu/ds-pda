@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/build/ds-pda/data",
+                "${workspaceFolder}/build/ds-pda/graphics",
                 "/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include",
                 "/opt/wonderful/thirdparty/blocksds/external/ulibrary/include"
             ],

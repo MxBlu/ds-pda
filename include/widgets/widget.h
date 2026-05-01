@@ -1,9 +1,12 @@
 #pragma once
 
+#include <vector>
+
 #include <ulib/ulib.h>
 // Just to shut up the language server up
 #include <nds/arm9/video.h>
 
+#include <spritesheet/common.h>
 #include <colours.h>
 
 #define WIDGET_PAD 8
@@ -30,5 +33,6 @@ protected:
 private:
     void drawTitle(const char *title, int top_x, int top_y, int width, int height);
 public:
+    virtual std::vector<lucide_icon_entry_t> getPreloadIcons() { return {}; };
     void draw(int top_x, int top_y, int width, int height);
 };

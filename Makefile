@@ -49,7 +49,7 @@ DEFINES		:=
 ARM7ELF		:= $(BLOCKSDS)/sys/arm7/main_core/arm7_dswifi_maxmod.elf
 #ARM7ELF		:= $(BLOCKSDS)/sys/arm7/main_core/arm7_maxmod.elf
 
-LIBS		:= -lmm9 -lnds9 -lul
+LIBS		:= -lmm9 -lnds9 -lul -lpng -lz
 LIBDIRS		:= $(BLOCKSDS)/libs/maxmod \
 		   $(BLOCKSDS)/libs/libnds \
 		   $(BLOCKSDSEXT)/ulibrary
@@ -100,6 +100,7 @@ ifneq ($(BINDIRS),)
 endif
 ifneq ($(GFXDIRS),)
     SOURCES_PNG	:= $(shell find -L $(GFXDIRS) -name "*.png")
+    SOURCES_GIF	:= $(shell find -L $(GFXDIRS) -name "*.gif")
     INCLUDEDIRS	+= $(addprefix $(BUILDDIR)/,$(GFXDIRS))
 endif
 ifneq ($(AUDIODIRS),)
@@ -153,10 +154,16 @@ LDFLAGS		+= $(ARCH) $(LIBDIRSFLAGS) -Wl,-Map,$(MAP) $(DEFINES) \
 # ------------------------
 
 OBJS_ASSETS	:= $(addsuffix .o,$(addprefix $(BUILDDIR)/,$(SOURCES_BIN))) \
+		   $(addsuffix .o,$(addprefix $(BUILDDIR)/,$(SOURCES_GIF))) \
 		   $(addsuffix .o,$(addprefix $(BUILDDIR)/,$(SOURCES_PNG)))
 
 HEADERS_ASSETS	:= $(patsubst %.bin,%_bin.h,$(addprefix $(BUILDDIR)/,$(SOURCES_BIN))) \
-		   $(patsubst %.png,%.h,$(addprefix $(BUILDDIR)/,$(SOURCES_PNG)))
+		   $(patsubst %.png,%_png.h,$(addprefix $(BUILDDIR)/,$(SOURCES_PNG))) \
+		   $(patsubst %.gif,%_gif.h,$(addprefix $(BUILDDIR)/,$(SOURCES_GIF)))
+
+SPRITESHEET_PNG_HEADERS := $(patsubst %.png,%_png.h,$(addprefix $(BUILDDIR)/,$(shell find -L $(GFXDIRS) -name "spritesheet_*.png")))
+SPRITESHEET_REGISTRY_HEADER := $(BUILDDIR)/graphics/spritesheet_registry.h
+HEADERS_ASSETS += $(SPRITESHEET_REGISTRY_HEADER)
 
 ifneq ($(SOURCES_AUDIO),)
     ifeq ($(strip $(NITROFSDIR)),)
@@ -262,6 +269,23 @@ $(BUILDDIR)/%.bin.o $(BUILDDIR)/%_bin.h : %.bin
 	@$(MKDIR) -p $(@D)
 	$(V)$(BLOCKSDS)/tools/bin2c/bin2c $< $(@D)
 	$(V)$(CC) $(CFLAGS) -MMD -MP -c -o $(BUILDDIR)/$*.bin.o $(BUILDDIR)/$*_bin.c
+
+$(BUILDDIR)/%.gif.o $(BUILDDIR)/%_gif.h : %.gif
+	@echo "  BIN2C   $<"
+	@$(MKDIR) -p $(@D)
+	$(V)$(BLOCKSDS)/tools/bin2c/bin2c $< $(@D)
+	$(V)$(CC) $(CFLAGS) -MMD -MP -c -o $(BUILDDIR)/$*.gif.o $(BUILDDIR)/$*_gif.c
+
+$(BUILDDIR)/%.png.o $(BUILDDIR)/%_png.h : %.png
+	@echo "  BIN2C   $<"
+	@$(MKDIR) -p $(@D)
+	$(V)$(BLOCKSDS)/tools/bin2c/bin2c $< $(@D)
+	$(V)$(CC) $(CFLAGS) -MMD -MP -c -o $(BUILDDIR)/$*.png.o $(BUILDDIR)/$*_png.c
+
+$(SPRITESHEET_REGISTRY_HEADER): $(SPRITESHEET_PNG_HEADERS) tools/generate_spritesheet_registry.py
+	@echo "  GEN     $@"
+	@$(MKDIR) -p $(@D)
+	$(V)python3 tools/generate_spritesheet_registry.py --output $@ $(SPRITESHEET_PNG_HEADERS)
 
 $(BUILDDIR)/%.png.o $(BUILDDIR)/%.h : %.png %.grit
 	@echo "  GRIT    $<"

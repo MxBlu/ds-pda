@@ -42,7 +42,8 @@
 #define C_ORANGE_MONARCH_ORANGE     RGB15(30, 18, 6)
 #define C_ORANGE                    RGB15(31, 18, 0)
 
-#define C_RED_PLUM_CHARCOAL RGB15(5, 4, 5)
-#define C_RED       RGB15(28, 6,  4)
+#define C_RED_BLACK_OLIVE     RGB15(3, 3, 2)
+#define C_RED_PLUM_CHARCOAL   RGB15(5, 4, 5)
+#define C_RED                 RGB15(28, 6, 4)
 
 #define C_BADGE_NSW RGB15(8,  4,  14) // purple-ish badge

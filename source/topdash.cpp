@@ -13,6 +13,8 @@
 #include <date_names.h>
 #include <helpers.h>
 #include <fonts.h>
+#include <icons.h>
+
 class WidgetsManager {
 public:
     std::vector<std::unique_ptr<Widget>> widgets;
@@ -39,6 +41,12 @@ void initTopScreen() {
     wm->addWidget<TrainWidget>();
     wm->addWidget<TasksWidget>();
     wm->addWidget<BudgetWidget>();
+
+    for (auto& widget : wm->widgets) {
+        for (auto& icon : widget->getPreloadIcons()) {
+            preloadIcon(icon);
+        }
+    }
 }
 
 bool canScrollUp() {
