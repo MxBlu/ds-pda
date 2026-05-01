@@ -96,8 +96,6 @@ void drawHeader(struct tm *tm) {
     const char *dayName = DAY_NAMES[tm->tm_wday];
     // Get the month and date in "MON 1" format
     snprintf(textBuf, sizeof(textBuf), "%s %d", MONTH_SHORT_NAMES[tm->tm_mon], tm->tm_mday);
-    // Calculate length of day name for positioning date text
-    int dayLen = ulGetStringWidth(dayName);
 
     // Redraw the background for the header area (in case of artifacts from widgets)
     ulDrawFillRect(0, 0, SCREEN_WIDTH, HDR_H + OUTER_PAD, C_BG);
@@ -106,6 +104,8 @@ void drawHeader(struct tm *tm) {
     selectFont(FONT_PROGGY_10);
     ulSetTextColor(C_DAY_TXT);
     drawStringBaselineAligned(OUTER_PAD, HDR_TEXT_Y, dayName);
+    // Calculate length of day name for positioning date text
+    int dayLen = ulGetStringWidth(dayName);
     // Draw month + date, positioned after day name + 1 space
     selectFont(FONT_PROGGY_12B);
     ulSetTextColor(C_DATETIME_TXT);
