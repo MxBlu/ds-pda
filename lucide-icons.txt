@@ -11,3 +11,9 @@ cloud-fog
 info
 triangle-alert
 octagon-alert
+arrow-right
+mail
+calendar
+tram-front
+square-check-big
+dollar-sign
