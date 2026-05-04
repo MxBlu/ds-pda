@@ -21,7 +21,7 @@ int main(void) {
     initBottomScreen();
 
     while (1) {
-        scanKeys();
+        ulReadKeys(0);
 
         updateTopScreen();
         updateBottomScreen();
