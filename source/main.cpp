@@ -4,7 +4,6 @@
 #include <topdash.h>
 #include <bottomdash.h>
 #include <fonts.h>
-#include <icons.h>
 
 // ---------------------------------------------------------------------------
 // Main

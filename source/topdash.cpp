@@ -16,6 +16,12 @@
 #include <fonts.h>
 #include <icons.h>
 
+/** Declarations */
+
+bool canScrollUp();
+bool canScrollDown();
+void drawHeader(struct tm *tm);
+
 class WidgetsManager {
 public:
     std::vector<std::unique_ptr<Widget>> widgets;
@@ -33,10 +39,14 @@ public:
     }
 };
 
+/** Globals */
+
 // Global widgets manager instance
 WidgetsManager *wm;
 // Global tm struct to hold current time for drawing header
 struct tm *curr_time;
+
+/** Main functions */
 
 void initTopScreen() {
     wm = new WidgetsManager();
@@ -51,22 +61,6 @@ void initTopScreen() {
             preloadIcon(icon);
         }
     }
-}
-
-bool canScrollUp() {
-    // We can only scroll up if we've scrolled down at least 1 pixel
-    return wm->pos_y > 0;
-}
-
-bool canScrollDown() {
-    int totalWidgetHeight = wm->getWidgetVerticalSpacing();
-    int availableHeight = SCREEN_HEIGHT - HDR_H - OUTER_PAD;
-    // No point scrolling if widgets fit within available space
-    if (totalWidgetHeight <= availableHeight) {
-        return false;
-    }
-    // Check if we've scrolled to the point where the last row of widgets is just visible
-    return wm->pos_y + availableHeight < totalWidgetHeight;
 }
 
 void updateTopScreen() {
@@ -152,4 +146,22 @@ void drawTopScreen() {
     // Draw the header elements
     // We draw this last so it appears above the widgets
     drawHeader(curr_time);
+}
+
+/** Helpers */
+
+bool canScrollUp() {
+    // We can only scroll up if we've scrolled down at least 1 pixel
+    return wm->pos_y > 0;
+}
+
+bool canScrollDown() {
+    int totalWidgetHeight = wm->getWidgetVerticalSpacing();
+    int availableHeight = SCREEN_HEIGHT - HDR_H - OUTER_PAD;
+    // No point scrolling if widgets fit within available space
+    if (totalWidgetHeight <= availableHeight) {
+        return false;
+    }
+    // Check if we've scrolled to the point where the last row of widgets is just visible
+    return wm->pos_y + availableHeight < totalWidgetHeight;
 }

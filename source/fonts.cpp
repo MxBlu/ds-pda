@@ -15,43 +15,43 @@ int currentFont = -1;
 static const int fontBaselineOffsets[NUM_FONTS] = {0, -2, -5, 0};
 
 void initFonts() {
-   fonts[FONT_PROGGY_10] = ulLoadFontFile((const char *)proggy_square_10_bin, sizeof(proggy_square_10_bin));
-   if (!fonts[FONT_PROGGY_10]) printf("\n Failed to load font size 10!");
+    fonts[FONT_PROGGY_10] = ulLoadFontFile((const char *)proggy_square_10_bin, sizeof(proggy_square_10_bin));
+    if (!fonts[FONT_PROGGY_10]) printf("\n Failed to load font size 10!");
 
-   fonts[FONT_PROGGY_12B] = ulLoadFontFile((const char *)proggy_square_12b_bin, sizeof(proggy_square_12b_bin));
-   if (!fonts[FONT_PROGGY_12B]) printf("\n Failed to load font size 12!");
+    fonts[FONT_PROGGY_12B] = ulLoadFontFile((const char *)proggy_square_12b_bin, sizeof(proggy_square_12b_bin));
+    if (!fonts[FONT_PROGGY_12B]) printf("\n Failed to load font size 12!");
 
-   fonts[FONT_PROGGY_16B] = ulLoadFontFile((const char *)proggy_square_16b_bin, sizeof(proggy_square_16b_bin));
-   if (!fonts[FONT_PROGGY_16B]) printf("\n Failed to load font size 16!");
+    fonts[FONT_PROGGY_16B] = ulLoadFontFile((const char *)proggy_square_16b_bin, sizeof(proggy_square_16b_bin));
+    if (!fonts[FONT_PROGGY_16B]) printf("\n Failed to load font size 16!");
 
-   ulSetFont(fonts[FONT_PROGGY_10]);
-   currentFont = FONT_PROGGY_10;
+    ulSetFont(fonts[FONT_PROGGY_10]);
+    currentFont = FONT_PROGGY_10;
 }
 
 void selectFont(int font) {
-   if (font < 0 || font >= NUM_FONTS) return;
-   ulSetFont(fonts[font]);
-   currentFont = font;
+    if (font < 0 || font >= NUM_FONTS) return;
+    ulSetFont(fonts[font]);
+    currentFont = font;
 }
 
 int getCurrentFont() {
-   return currentFont;
+    return currentFont;
 }
 
 int getFontBaselineOffset(int font) {
-   if (font < 0 || font >= NUM_FONTS) return 0;
-   return fontBaselineOffsets[font];
+    if (font < 0 || font >= NUM_FONTS) return 0;
+    return fontBaselineOffsets[font];
 }
 
 int getCurrentFontBaselineOffset() {
-   return getFontBaselineOffset(currentFont);
+    return getFontBaselineOffset(currentFont);
 }
 
 void drawStringBaselineAligned(int x, int y, const char *text) {
-   ulDrawString(x, y + getCurrentFontBaselineOffset(), text);
+    ulDrawString(x, y + getCurrentFontBaselineOffset(), text);
 }
 
 void drawStringBaselineAlignedRightAligned(int x, int y, const char *text) {
-   int textWidth = ulGetStringWidth(text);
-   ulDrawString(x - textWidth, y + getCurrentFontBaselineOffset(), text);
+    int textWidth = ulGetStringWidth(text);
+    ulDrawString(x - textWidth, y + getCurrentFontBaselineOffset(), text);
 }
