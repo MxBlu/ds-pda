@@ -6,15 +6,11 @@
 // Colour palette  (RGB15 = 5-bit per channel, 0-31)
 // ---------------------------------------------------------------------------
 
-#define C_WEATHER   RGB15(10, 6,  4)   // Warm brown
-#define C_TRAIN     RGB15(4,  6,  11)  // Cool blue
-#define C_TASKS     RGB15(4,  8,  5)   // Green
-#define C_BUDGET    RGB15(8,  4,  9)   // Purple
-
 #define C_WHITE             RGB15(31, 31, 31)
 #define C_LTGREY            RGB15(20, 20, 22)
 #define C_GREY_STEEL_MIST   RGB15(18, 20, 23)
 #define C_GREY              RGB15(12, 12, 14)
+#define C_GREY_CHARCOAL     RGB15(5,  5,  5)
 #define C_SLTGREY           RGB15(3,  4,  8)
 #define C_GREY_DEEP_NIGHT   RGB15(3,  3,  3)
 #define C_BLACK             RGB15(0,  0,  0)
@@ -28,6 +24,7 @@
 #define C_BLUE_MIDNIGHT_NAVY RGB15(6, 8, 11)
 #define C_BLUE_DEEP_OCEAN_BLUE RGB15(7, 9, 12)
 #define C_BLUE_MAYA_BLUE     RGB15(13, 20, 31)
+#define C_BLUE_MUTED_SLATE   RGB15(17, 20, 21)
 
 #define C_GREEN_DEEP_FOREST_SHADOW RGB15(4, 5, 4)
 #define C_GREEN_STORMY      RGB15(5, 7, 5)

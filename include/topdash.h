@@ -1,7 +1,5 @@
 #pragma once
 
-#include <time.h>
-
 #include <colours.h>
 
 // Padding from screen edges for header and widgets
@@ -18,4 +16,4 @@
 
 void initTopScreen();
 void updateTopScreen();
-void drawTopScreen(struct tm*);
+void drawTopScreen();

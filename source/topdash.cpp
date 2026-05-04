@@ -1,5 +1,6 @@
 #include <vector>
 #include <memory>
+#include <time.h>
 #include <nds/system.h>
 #include <ulib/ulib.h>
 
@@ -32,7 +33,10 @@ public:
     }
 };
 
+// Global widgets manager instance
 WidgetsManager *wm;
+// Global tm struct to hold current time for drawing header
+struct tm *curr_time;
 
 void initTopScreen() {
     wm = new WidgetsManager();
@@ -66,6 +70,10 @@ bool canScrollDown() {
 }
 
 void updateTopScreen() {
+    // Update time
+    time_t t = time(NULL);
+    curr_time = localtime(&t);
+
     // Handle inputs
     auto keys = keysHeld();
     // Down - scroll down (move widgets up)
@@ -121,7 +129,7 @@ void drawHeader(struct tm *tm) {
     ulDrawLine(OUTER_PAD, HDR_H - 1, SCREEN_WIDTH - OUTER_PAD, HDR_H - 1, C_HEADER_SEP);
 }
 
-void drawTopScreen(struct tm *tm) {
+void drawTopScreen() {
     selectFont(FONT_PROGGY_10);
     // Set background colour
     ulDrawFillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, C_BG);
@@ -143,5 +151,5 @@ void drawTopScreen(struct tm *tm) {
 
     // Draw the header elements
     // We draw this last so it appears above the widgets
-    drawHeader(tm);
+    drawHeader(curr_time);
 }

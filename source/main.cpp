@@ -1,46 +1,40 @@
 #include <nds.h>
 #include <ulib/ulib.h>
-#include <stdio.h>
 
 #include <topdash.h>
+#include <bottomdash.h>
 #include <fonts.h>
+#include <icons.h>
 
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 int main(void) {
-    // 1. VRAM for 3D hardware
-    // vramSetBankA(VRAM_A_TEXTURE);
-    // vramSetBankB(VRAM_B_TEXTURE);
-    // vramSetBankE(VRAM_E_TEX_PALETTE);
-
-    // 2. Bottom screen debug console
-    videoSetModeSub(MODE_0_2D);
-    vramSetBankC(VRAM_C_SUB_BG);
-    consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 31, 0, false, true);
-    printf("\n  PDA OS Initialized.\n  Bottom screen ready.");
-
-    // 3. Inits
+    // ulib inits
     ulInit(UL_INIT_ALL);
     ulInitGfx();
+    // Dual screen mode, we'll be running 30fps
+    ulInitDualScreenMode();
 
+    // App inits
     initFonts();
     initTopScreen();
+    initBottomScreen();
 
     while (1) {
-        // Get current time
-        time_t t = time(NULL);
-        struct tm *tm = localtime(&t);
-        // Update keys
         scanKeys();
 
-        // Run updates
         updateTopScreen();
+        updateBottomScreen();
 
         ulStartDrawing2D();
 
         // Run draws
-        drawTopScreen(tm);
+        if (!ulGetMainLcd()) {
+            drawTopScreen();
+        } else {
+            drawBottomScreen();
+        }
 
         ulEndDrawing();
         ulSyncFrame();
