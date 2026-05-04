@@ -106,5 +106,4 @@ void drawIcon(lucide_icon_entry_t icon, int x, int y, u16 colour) {
    ulSetImageTint(sheet, colour);
    ulSetImageTileSize(sheet, icon.u, icon.v, icon.size, icon.size);
    ulDrawImageXY(sheet, x, y);
-
 }
