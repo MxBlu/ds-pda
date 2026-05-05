@@ -54,6 +54,8 @@ void updateBottomScreen() {
             }
         }
     }
+    // Update active tab
+    tm->tabs[tm->activeTab]->update();
 }
 
 void drawTabBar() {
@@ -77,12 +79,12 @@ void drawTabBar() {
         drawIcon(tab->icon, centreLine + iconOffset, TAB_ICON_Y, iconColour);
 
         if (i > 0) {
-            ulDrawFillRect(centreLine - 1, 0, centreLine + 1, TAB_BAR_HEIGHT, C_BLACK);
+            ulDrawFillRect(centreLine - 1, 0, centreLine + 1, TAB_BAR_HEIGHT, C_BG);
         }
     }
 
     // Tab bar separator line
-    ulDrawLine(0, TAB_BAR_HEIGHT, SCREEN_WIDTH, TAB_BAR_HEIGHT, C_BLACK);
+    ulDrawLine(0, TAB_BAR_HEIGHT, SCREEN_WIDTH, TAB_BAR_HEIGHT, C_BG);
 }
 
 void drawFooter() {
@@ -91,17 +93,21 @@ void drawFooter() {
     selectFont(FONT_PROGGY_10);
     ulSetTextColor(C_FOOTER_STATUS);
     drawStringBaselineAligned(FOOTER_TEXT_X, SCREEN_HEIGHT - FOOTER_TEXT_Y_OFFSET, "ONLINE");
+
+    // Footer separator line
+    ulDrawLine(0, SCREEN_HEIGHT - FOOTER_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - FOOTER_HEIGHT, C_BG);
 }
 
 void drawBottomScreen() {
-    // Set background colour   
-    ulDrawFillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, C_BG);
-
-    // Tab bar
-    drawTabBar();
-
     // Work area
+    
+    // Draw background
+    ulDrawFillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, C_BG);
+    // Draw active tab contents
+    tm->tabs[tm->activeTab]->draw(0, TAB_BAR_HEIGHT + 2, 
+        SCREEN_WIDTH, SCREEN_HEIGHT - TAB_BAR_HEIGHT - FOOTER_HEIGHT);
 
-    // Footer
+    // Overlays
+    drawTabBar();
     drawFooter();
 }

@@ -7,5 +7,6 @@ class CalendarTab : public Tab {
 public:
     CalendarTab() : Tab(LUCIDE_16_TABLE[LUCIDE_16_ICON_CALENDAR]) {}
 
+    void update();
     void draw(int top_x, int top_y, int width, int height);
 };

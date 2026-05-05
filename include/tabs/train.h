@@ -7,5 +7,6 @@ class TrainTab : public Tab {
 public:
     TrainTab() : Tab(LUCIDE_16_TABLE[LUCIDE_16_ICON_TRAM_FRONT]) {}
 
+    void update();
     void draw(int top_x, int top_y, int width, int height);
 };

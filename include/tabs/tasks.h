@@ -7,5 +7,6 @@ class TasksTab : public Tab {
 public:
     TasksTab() : Tab(LUCIDE_16_TABLE[LUCIDE_16_ICON_SQUARE_CHECK_BIG]) {}
 
+    void update();
     void draw(int top_x, int top_y, int width, int height);
 };
