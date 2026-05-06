@@ -1,6 +1,10 @@
 #pragma once
 
+#include <nds.h>
 #include <spritesheet/common.h>
+
+// Screen height - tab bar height - footer height
+#define CONTENT_AREA_HEIGHT SCREEN_HEIGHT - 24 - 20
 
 class Tab {
 protected:
