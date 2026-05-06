@@ -18,7 +18,7 @@
 
 typedef struct mail_item {
     char sender[32];
-    char subject[64];
+    char subject[32];
     char received_time[16];
 } mail_item;
 
