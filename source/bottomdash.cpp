@@ -30,6 +30,7 @@ public:
 };
 
 TabManager *tm;
+// TODO: All Lucide icon use needs to be preloaded
 
 void initBottomScreen() {
     tm = new TabManager();
