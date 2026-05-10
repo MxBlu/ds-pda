@@ -11,7 +11,7 @@
 #define ACCENT_RECT_PADDING_X 4
 #define ACCENT_RECT_PADDING_Y 8
 #define SENDER_SUBJECT_PADDING_X 8
-#define SENDER_SUBJECT_START_X(paddedX) paddedX + ACCENT_RECT_PADDING_X + ACCENT_RECT_WIDTH + SENDER_SUBJECT_PADDING_X
+#define SENDER_SUBJECT_START_X(paddedX) (paddedX + ACCENT_RECT_PADDING_X + ACCENT_RECT_WIDTH + SENDER_SUBJECT_PADDING_X)
 #define SENDER_TIME_OFFSET_Y 8
 #define SUBJECT_OFFSET_Y 24
 #define TIME_N_OFFSET_X 4
@@ -59,7 +59,7 @@ void MailTab::draw(int top_x, int top_y, int width, int height) {
 
     selectFont(FONT_PROGGY_10);
     for (int i = startIndex; i <= maxIndex && i < numItems; i++) {
-        const mail_item &mail = demo_mails[i];
+        const mail_item *mail = &demo_mails[i];
 
         int itemY = top_y - this->pos_y + i * ITEM_HEIGHT;
 
@@ -79,12 +79,12 @@ void MailTab::draw(int top_x, int top_y, int width, int height) {
 
         // Draw sender and subject
         ulSetTextColor(C_WHITE);
-        drawStringBaselineAligned(SENDER_SUBJECT_START_X(paddedX), paddedY + SENDER_TIME_OFFSET_Y, mail.sender);
-        drawStringBaselineAligned(SENDER_SUBJECT_START_X(paddedX), paddedY + SUBJECT_OFFSET_Y, mail.subject);
+        drawStringBaselineAligned(SENDER_SUBJECT_START_X(paddedX), paddedY + SENDER_TIME_OFFSET_Y, mail->sender);
+        drawStringBaselineAligned(SENDER_SUBJECT_START_X(paddedX), paddedY + SUBJECT_OFFSET_Y, mail->subject);
 
         // Draw received time on the right
         ulSetTextColor(C_GREY);
         drawStringBaselineAlignedRightAligned(
-            paddedX + paddedWidth - TIME_N_OFFSET_X, paddedY + SENDER_TIME_OFFSET_Y, mail.received_time);
+            paddedX + paddedWidth - TIME_N_OFFSET_X, paddedY + SENDER_TIME_OFFSET_Y, mail->received_time);
     }
 }

@@ -7,7 +7,7 @@
 #include <colours.h>
 #include <fonts.h>
 
-#define ITEM_HEIGHT 46
+#define ITEM_HEIGHT 36
 #define ITEM_PADDING_X 4
 #define ITEM_PADDING_Y 2
 #define ITEM_ACCENT_RECT_WIDTH 2
@@ -15,8 +15,8 @@
 #define ITEM_SUBJECT_LOCATION_PADDING_X 68
 #define ITEM_TIME_START_X(paddedX) (paddedX + ITEM_ACCENT_RECT_WIDTH + ITEM_TIME_PADDING_X)
 #define ITEM_SUBJECT_LOCATION_START_X(paddedX) (paddedX + ITEM_ACCENT_RECT_WIDTH + ITEM_SUBJECT_LOCATION_PADDING_X)
-#define ITEM_SUBJECT_TIME_OFFSET_Y 8
-#define ITEM_LOCATION_OFFSET_Y 24
+#define ITEM_SUBJECT_TIME_OFFSET_Y 4
+#define ITEM_LOCATION_OFFSET_Y 20
 
 #define PRIORITY_ITEM_HEIGHT 28
 #define PRIORITY_ITEM_TEXT_OFFSET_Y 9
@@ -44,7 +44,7 @@ const calendar_entry priority_event = { "Holiday", "", "10 days" };
 
 void CalendarTab::update() {
     if (ul_keys.touch.deltaY != 0) {
-        int maxScrollY = num_events * ITEM_HEIGHT - CONTENT_AREA_HEIGHT;
+        int maxScrollY = (num_events * ITEM_HEIGHT) - CONTENT_AREA_HEIGHT + PRIORITY_ITEM_HEIGHT;
         // maxScrollY > 0 checks whether there's enough items to scroll
         if (maxScrollY > 0) {
             this->pos_y -= ul_keys.touch.deltaY;
@@ -61,13 +61,14 @@ void CalendarTab::update() {
 }
 
 void CalendarTab::draw(int top_x, int top_y, int width, int height) {
-    int startIndex = 0;
-    int maxIndex = num_events;
+    int startIndex = this->pos_y / ITEM_HEIGHT;
+    int maxIndex = startIndex + height / ITEM_HEIGHT + 1;
 
+    selectFont(FONT_PROGGY_10);
     for (int i = startIndex; i < maxIndex; i++) {
         const calendar_entry *entry = &demo_agenda[i];
 
-        int itemY = top_y + i * ITEM_HEIGHT;
+        int itemY = top_y - this->pos_y + i * ITEM_HEIGHT;
 
         int paddedX = top_x + ITEM_PADDING_X;
         int paddedY = itemY + ITEM_PADDING_Y;
@@ -81,7 +82,6 @@ void CalendarTab::draw(int top_x, int top_y, int width, int height) {
         ulDrawFillRect(paddedX, paddedY, paddedX + ITEM_ACCENT_RECT_WIDTH, paddedY + paddedHeight, C_BLUE_MAYA_BLUE);
 
         // Time
-        selectFont(FONT_PROGGY_10);
         ulSetTextColor(C_WHITE);
         drawStringBaselineAligned(ITEM_TIME_START_X(paddedX), paddedY + ITEM_SUBJECT_TIME_OFFSET_Y, entry->time);
 

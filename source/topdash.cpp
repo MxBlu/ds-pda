@@ -69,9 +69,8 @@ void updateTopScreen() {
     curr_time = localtime(&t);
 
     // Handle inputs
-    auto keys = keysHeld();
     // Down - scroll down (move widgets up)
-    if (keys & KEY_DOWN && canScrollDown()) {
+    if (ul_keys.held.down && canScrollDown()) {
         int totalWidgetHeight = wm->getWidgetVerticalSpacing();
         int availableHeight = SCREEN_HEIGHT - HDR_H - OUTER_PAD;
 
@@ -82,7 +81,7 @@ void updateTopScreen() {
         }
     }
     // Up - scroll up (move widgets down)
-    if (keys & KEY_UP && canScrollUp()) {
+    if (ul_keys.held.up && canScrollUp()) {
         wm->pos_y -= 5;
         // Clamp to minimum scroll position of 0
         if (wm->pos_y < 0) {

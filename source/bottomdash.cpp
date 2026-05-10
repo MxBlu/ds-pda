@@ -49,7 +49,7 @@ void updateBottomScreen() {
         int touchY = ul_keys.touch.y;
 
         if (touchY < TAB_BAR_HEIGHT) {
-            uint tabIndex = touchX / TAB_WIDTH;
+            u16 tabIndex = touchX / TAB_WIDTH;
             if (tabIndex < tm->tabs.size()) {
                 tm->activeTab = tabIndex;
             }

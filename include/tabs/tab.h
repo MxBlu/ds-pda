@@ -4,7 +4,10 @@
 #include <spritesheet/common.h>
 
 // Screen height - tab bar height - footer height
-#define CONTENT_AREA_HEIGHT SCREEN_HEIGHT - 24 - 20
+// The +2 fixes padding for the last item
+#define CONTENT_AREA_HEIGHT (SCREEN_HEIGHT - 24 - 20 - 2) 
+
+extern int g_last_update_y;
 
 class Tab {
 protected:
