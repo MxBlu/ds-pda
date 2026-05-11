@@ -8,7 +8,7 @@
 #include <fonts.h>
 
 #define ITEM_HEIGHT 36
-#define ITEM_PADDING_X 4
+#define ITEM_PADDING_X 2
 #define ITEM_PADDING_Y 2
 #define ITEM_ACCENT_RECT_WIDTH 2
 #define ITEM_TIME_PADDING_X 8
